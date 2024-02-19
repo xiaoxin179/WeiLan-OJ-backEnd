@@ -1,11 +1,19 @@
 package com.xiaoxin.WeiLanOJ.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xiaoxin.WeiLanOJ.annotation.AuthCheck;
 import com.xiaoxin.WeiLanOJ.common.BaseResponse;
 import com.xiaoxin.WeiLanOJ.common.ErrorCode;
 import com.xiaoxin.WeiLanOJ.common.ResultUtils;
+import com.xiaoxin.WeiLanOJ.constant.UserConstant;
 import com.xiaoxin.WeiLanOJ.exception.BusinessException;
+import com.xiaoxin.WeiLanOJ.model.dto.question.QuestionQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitQueryRequest;
+import com.xiaoxin.WeiLanOJ.model.entity.Question;
+import com.xiaoxin.WeiLanOJ.model.entity.QuestionSubmit;
 import com.xiaoxin.WeiLanOJ.model.entity.User;
+import com.xiaoxin.WeiLanOJ.model.vo.QuestionSubmitVO;
 import com.xiaoxin.WeiLanOJ.service.QuestionSubmitService;
 import com.xiaoxin.WeiLanOJ.service.UserService;
 import javax.annotation.Resource;
@@ -47,6 +55,17 @@ public class QuestionSubmitController {
         final User loginUser = userService.getLoginUser(request);
         long  questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(questionSubmitId);
+    }
+    @PostMapping("/list/page")
+    public BaseResponse<Page<QuestionSubmitVO>> listQuestionByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,HttpServletRequest request) {
+        long current = questionSubmitQueryRequest.getCurrent();
+        long size = questionSubmitQueryRequest.getPageSize();
+//        从数据库中查询到了原始的提交信息
+        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size),
+                questionSubmitService.getQueryWrapper(questionSubmitQueryRequest));
+        final User loginUser = userService.getLoginUser(request);
+//        返回脱敏信息
+        return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage,loginUser));
     }
 
 }

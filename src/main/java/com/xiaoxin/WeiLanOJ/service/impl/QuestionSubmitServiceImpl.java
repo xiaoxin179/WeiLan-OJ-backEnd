@@ -1,29 +1,52 @@
 package com.xiaoxin.WeiLanOJ.service.impl;
+
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaoxin.WeiLanOJ.common.ErrorCode;
+import com.xiaoxin.WeiLanOJ.constant.CommonConstant;
 import com.xiaoxin.WeiLanOJ.exception.BusinessException;
+import com.xiaoxin.WeiLanOJ.model.dto.question.QuestionQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.entity.*;
 import com.xiaoxin.WeiLanOJ.model.entity.QuestionSubmit;
 import com.xiaoxin.WeiLanOJ.model.enums.QuestionSubmitLanguageEnum;
 import com.xiaoxin.WeiLanOJ.model.enums.QuestionSubmitStatusEnum;
+import com.xiaoxin.WeiLanOJ.model.vo.QuestionSubmitVO;
+import com.xiaoxin.WeiLanOJ.model.vo.QuestionVO;
+import com.xiaoxin.WeiLanOJ.model.vo.UserVO;
 import com.xiaoxin.WeiLanOJ.service.QuestionService;
 import com.xiaoxin.WeiLanOJ.service.QuestionSubmitService;
 import com.xiaoxin.WeiLanOJ.mapper.QuestionSubmitMapper;
+import com.xiaoxin.WeiLanOJ.service.UserService;
+import com.xiaoxin.WeiLanOJ.utils.SqlUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 /**
-* @author XIAOXIN
-* @description 针对表【question_submit(题目提交)】的数据库操作Service实现
-* @createDate 2024-02-18 18:08:14
-*/
+ * @author XIAOXIN
+ * @description 针对表【question_submit(题目提交)】的数据库操作Service实现
+ * @createDate 2024-02-18 18:08:14
+ */
 @Service
+@Slf4j
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
-    implements QuestionSubmitService{
+        implements QuestionSubmitService {
     @Resource
     private QuestionService questionService;
+    @Resource
+    private UserService userService;
 
     /**
      * 提交题目
@@ -63,6 +86,57 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");
         }
         return questionSubmit.getId();
+    }
+
+    /*
+     *  根据用户请求的参数来拼接出mybatis支持的查询queryWrapper类
+     */
+    @Override
+    public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
+        QueryWrapper<QuestionSubmit> queryWrapper = new QueryWrapper<>();
+        if (questionSubmitQueryRequest == null) {
+            return queryWrapper;
+        }
+        String language = questionSubmitQueryRequest.getLanguage();
+        Integer status = questionSubmitQueryRequest.getStatus();
+        Long questionId = questionSubmitQueryRequest.getQuestionId();
+        Long userId = questionSubmitQueryRequest.getUserId();
+        String sortField = questionSubmitQueryRequest.getSortField();
+        String sortOrder = questionSubmitQueryRequest.getSortOrder();
+        // 拼接查询条件
+        queryWrapper.eq(ObjectUtils.isNotEmpty(language), "language", language);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        queryWrapper.eq(QuestionSubmitStatusEnum.getEnumByValue(status) != null, "status", status);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(questionId), "questionId", questionId);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
+                sortField);
+        return queryWrapper;
+    }
+
+    @Override
+    public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
+        QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
+//        脱敏
+        Long userId = loginUser.getId();
+//        如果用户id不是代码代码提交者的id，就需要脱敏
+        if (userId.equals(questionSubmit.getUserId())&& !userService.isAdmin(loginUser)) {
+            questionSubmitVO.setCode(null);
+        }
+        return questionSubmitVO;
+    }
+
+    @Override
+    public Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage, User loginUser) {
+        List<QuestionSubmit> questionSubmitList = questionSubmitPage.getRecords();
+        Page<QuestionSubmitVO> questionSubmitVOPage = new Page<>(questionSubmitPage.getCurrent(), questionSubmitPage.getSize(), questionSubmitPage.getTotal());
+        if (CollUtil.isEmpty(questionSubmitList)) {
+            return questionSubmitVOPage;
+        }
+        List<QuestionSubmitVO> questionSubmitVOList = questionSubmitList.stream().map(questionSubmit -> {
+            return getQuestionSubmitVO(questionSubmit, loginUser);
+        }).collect(Collectors.toList());
+        questionSubmitVOPage.setRecords(questionSubmitVOList);
+        return questionSubmitVOPage;
     }
 
 }
