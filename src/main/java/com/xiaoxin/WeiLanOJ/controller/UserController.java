@@ -44,9 +44,6 @@ import static com.xiaoxin.WeiLanOJ.service.impl.UserServiceImpl.SALT;
 
 /**
  * 用户接口
- *
- * @author <a href="https://github.com/lixiaoxin">程序员xiaoxin</a>
- * @from <a href="https://xiaoxin.icu">编程导航知识星球</a>
  */
 @RestController
 @RequestMapping("/user")

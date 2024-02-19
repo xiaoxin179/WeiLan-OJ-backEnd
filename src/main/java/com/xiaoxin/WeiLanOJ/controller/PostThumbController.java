@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 帖子点赞接口
- *
- * @author <a href="https://github.com/lixiaoxin">程序员xiaoxin</a>
- * @from <a href="https://xiaoxin.icu">编程导航知识星球</a>
  */
 @RestController
 @RequestMapping("/post_thumb")

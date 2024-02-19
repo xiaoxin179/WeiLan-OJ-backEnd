@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * 帖子收藏 / 取消收藏请求
  *
- * @author <a href="https://github.com/lixiaoxin">程序员xiaoxin</a>
+ * @author    
  * @from <a href="https://xiaoxin.icu">编程导航知识星球</a>
  */
 @Data

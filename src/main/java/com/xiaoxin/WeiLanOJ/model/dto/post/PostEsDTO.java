@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 帖子 ES 包装类
  *
- * @author <a href="https://github.com/lixiaoxin">程序员xiaoxin</a>
+ * @author    
  * @from <a href="https://xiaoxin.icu">编程导航知识星球</a>
  **/
 // todo 取消注释开启 ES（须先配置 ES）
