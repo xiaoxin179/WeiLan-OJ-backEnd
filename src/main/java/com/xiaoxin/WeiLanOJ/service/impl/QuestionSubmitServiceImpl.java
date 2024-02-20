@@ -1,5 +1,4 @@
 package com.xiaoxin.WeiLanOJ.service.impl;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaoxin.WeiLanOJ.common.ErrorCode;
 import com.xiaoxin.WeiLanOJ.constant.CommonConstant;
 import com.xiaoxin.WeiLanOJ.exception.BusinessException;
-import com.xiaoxin.WeiLanOJ.model.dto.question.QuestionQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.entity.*;
@@ -15,23 +13,15 @@ import com.xiaoxin.WeiLanOJ.model.entity.QuestionSubmit;
 import com.xiaoxin.WeiLanOJ.model.enums.QuestionSubmitLanguageEnum;
 import com.xiaoxin.WeiLanOJ.model.enums.QuestionSubmitStatusEnum;
 import com.xiaoxin.WeiLanOJ.model.vo.QuestionSubmitVO;
-import com.xiaoxin.WeiLanOJ.model.vo.QuestionVO;
-import com.xiaoxin.WeiLanOJ.model.vo.UserVO;
 import com.xiaoxin.WeiLanOJ.service.QuestionService;
 import com.xiaoxin.WeiLanOJ.service.QuestionSubmitService;
 import com.xiaoxin.WeiLanOJ.mapper.QuestionSubmitMapper;
 import com.xiaoxin.WeiLanOJ.service.UserService;
 import com.xiaoxin.WeiLanOJ.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 /**
