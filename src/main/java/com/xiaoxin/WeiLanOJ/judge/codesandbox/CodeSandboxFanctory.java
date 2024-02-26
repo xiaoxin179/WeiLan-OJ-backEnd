@@ -7,6 +7,8 @@ import com.xiaoxin.WeiLanOJ.judge.codesandbox.impl.ThildCodeSandbox;
 /**
  * @author:XIAOXIN
  * @date:2024/02/25
+ * 设计模式
+ * 工厂模式
  * 代码沙箱工厂
  **/
 public class CodeSandboxFanctory {

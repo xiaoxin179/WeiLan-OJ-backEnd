@@ -31,7 +31,6 @@ public class ExanmpleCodeSandbox implements CodeSandbox {
         judgeInfo.setTime(100L);
         judgeInfo.setMemory(100L);
         excuteCodeResponse.setJudgeInfo(judgeInfo);
-
         return null;
     }
 }

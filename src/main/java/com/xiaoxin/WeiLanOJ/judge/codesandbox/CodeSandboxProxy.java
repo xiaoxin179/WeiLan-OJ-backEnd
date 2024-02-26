@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author:XIAOXIN
  * @date:2024/02/26
+ * 设计模式
+ * 代理模式
  * 使用代理模式增强原有的代理类
  **/
 @Slf4j

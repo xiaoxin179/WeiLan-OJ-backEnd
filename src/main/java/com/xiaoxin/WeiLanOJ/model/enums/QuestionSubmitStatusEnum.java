@@ -12,7 +12,7 @@ public enum QuestionSubmitStatusEnum {
 
     WAITING("等待中", 0),
     RUNNING("判题中", 1),
-    ACCEPTED("通过", 2),
+    ACCEPTED("成功", 2),
     FALSE("失败",3);
     private final String text;
 

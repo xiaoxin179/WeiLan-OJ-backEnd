@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaoxin.WeiLanOJ.common.ErrorCode;
 import com.xiaoxin.WeiLanOJ.constant.CommonConstant;
 import com.xiaoxin.WeiLanOJ.exception.BusinessException;
+import com.xiaoxin.WeiLanOJ.judge.JudgeService;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xiaoxin.WeiLanOJ.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xiaoxin.WeiLanOJ.model.entity.*;
@@ -19,9 +20,11 @@ import com.xiaoxin.WeiLanOJ.mapper.QuestionSubmitMapper;
 import com.xiaoxin.WeiLanOJ.service.UserService;
 import com.xiaoxin.WeiLanOJ.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -37,6 +40,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     private QuestionService questionService;
     @Resource
     private UserService userService;
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     /**
      * 提交题目
@@ -75,7 +81,14 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据插入失败");
         }
-        return questionSubmit.getId();
+//        todo 执行判题服务
+//       异步执行judgeService
+        Long id = questionSubmit.getId();
+        log.info("判定的题目id为："+id);
+        CompletableFuture.runAsync(()->{
+            judgeService.doJudge(id);
+        });
+        return id;
     }
 
     /*
