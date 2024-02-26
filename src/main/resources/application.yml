@@ -97,3 +97,6 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.xiaoxin.WeiLanOJ.controller
+#代码沙箱外放配置
+codesandbox:
+  type:remote
